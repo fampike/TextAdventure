@@ -104,6 +104,15 @@ class Room
 
         return builder.toString();
     }
+    public void deleteItem(Item item) {items.remove(item); }
+
+    public void deleteItem(Item... items){
+        for (Item item : items) {
+            this.items.remove(item);
+
+        }
+
+    }
 
     public void addItem(Item item) {
         items.add(item);
@@ -112,6 +121,7 @@ class Room
     public void addItems(Item... items) {
         for (Item item : items) {
             this.items.add(item);
+
         }
     }
 

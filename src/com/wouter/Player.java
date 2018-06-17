@@ -98,14 +98,17 @@ public class Player {
      * @param item the item to pick up
      */
     public void take(Item item) {
+
         if (carryingWeight + item.getWeight() < capacity) {
             item.onPickup();
             carryingWeight += item.getWeight();
             inventory.add(item);
-            System.out.println("You pick up: " + item.getName());
+            currentRoom.deleteItem(item);
+            System.out.println("You picked up: " + item.getName());
         } else {
             System.out.println("You can not hold more items");
         }
+
     }
 
     /**
@@ -113,7 +116,16 @@ public class Player {
      * @param item item to drop
      */
     public void drop(Item item) {
-        inventory.remove(item);
+        //Acquire Object monitor to avoid concurrency clash
+
+        for (int i = inventory.size() - 1; i >= 0; i--) {
+            Item current = inventory.get(i);
+            if (current == item) {
+                inventory.remove(i);
+            }
+
+        }
+
         carryingWeight -= item.getWeight();
         currentRoom.addItem(item);
         System.out.println("You drop " + item.getName() + " to the floor");
@@ -130,4 +142,10 @@ public class Player {
     public int getCarryingWeight() {
         return carryingWeight;
     }
+
+
+    public ArrayList<Item> getInventory() {
+        return inventory;
+    }
 }
+

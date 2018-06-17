@@ -3,6 +3,8 @@ package com.wouter;
 import com.wouter.items.Item;
 import com.wouter.items.Weapon;
 
+import java.util.ArrayList;
+
 /**
  *  This class is the main class of the "World of Zuul" application.
  *  "World of Zuul" is a very simple, text based adventure game.  Users
@@ -136,7 +138,13 @@ class Game
             System.out.println(player.getCurrentRoom().getLongDescription());
         else if (commandWord.equals("items"))
             System.out.println(player.getCurrentRoom().getItemsString());
+        else if (commandWord.equals("take"))
+            takeItem(command);
+        else if (commandWord.equals("drop"))
+            dropItem(command);
+
     }
+
 
 
     /**
@@ -169,10 +177,56 @@ class Game
         parser.showCommands();
     }
 
+
+    /**
+     * looks if the item is in the room
+     * if it is put it in the inventory
+     *
+     */
+    private void takeItem(Command command){
+        ArrayList<Item> items = player.getCurrentRoom().getItems();
+        String second = command.getSecondWord();
+        for (Item item : items) {
+            if (item.getName().equals(second)) {
+                player.take(item);
+
+            }else
+                System.out.println("That item is not in the room...");
+        }
+
+
+    }
+
+    /**
+     * looks if the item is in the inventory
+     * if it is drop it to the room
+     *
+     */
+    private void dropItem(Command command){
+        ArrayList<Item> items = player.getInventory();
+        String second = command.getSecondWord();
+
+        Item found = null;
+
+        for (Item item : items) {
+            if (item.getName().equals(second)) {
+                found = item;
+
+            }else
+                System.out.println("You dont have this item");
+
+        }
+
+        if (found != null) {
+            player.drop(found);
+        }
+    }
+
     /**
      * Try to go to one direction. If there is an exit, enter the new
      * room, otherwise print an error message.
      */
+
     private void goRoom(Command command)
     {
         if(!command.hasSecondWord()) {
@@ -180,6 +234,7 @@ class Game
             System.out.println("Go where?");
             return;
         }
+
 
         String direction = command.getSecondWord();
 
